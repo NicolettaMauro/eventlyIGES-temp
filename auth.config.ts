@@ -7,23 +7,28 @@ import bcrypt from "bcryptjs";
 
 
 
-export default { providers: [
-    Credentials
-    ({
-        async authorize(credentials) {
-            const validatedFields = await LoginSchema.safeParseAsync(credentials);
-            if (validatedFields.success) {
-                const {email, password} = validatedFields.data;
-                const user = await getUserByEmail(email);
-                if(!user || !user.password) {
-                    return null;
-                }
-                const passwordsMatch = await bcrypt.compare(password, user.password);
-                if(passwordsMatch) {
-                    return user;
-                }
-            }
-            return null;
+export default {
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        const validatedFields = await LoginSchema.safeParseAsync(credentials);
+        if (!validatedFields.success) return null;
+
+        const { email, password } = validatedFields.data;
+
+        const user = await getUserByEmail(email);
+        if (!user || !user.password) return null;
+
+        if (password === user.password) {
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name ?? undefined
+          };
         }
+
+        return null;
+      }
     })
-], } satisfies NextAuthConfig
+  ]
+} satisfies NextAuthConfig;

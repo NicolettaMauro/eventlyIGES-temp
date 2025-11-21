@@ -7,24 +7,33 @@ const useLocation = () => {
   const [loadingLocation, setLoadingLocation] = useState(false);
 
   const getLocation = () => {
+    console.log("→ Chiamata getLocation()");
     setLoadingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserCoords({ lat: latitude, lng: longitude });
-          setLoadingLocation(false);
-        },
-        (error) => {
-          console.error("Errore nel recupero della posizione:", error);
-          setLoadingLocation(false);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
-      );
-    } else {
-      console.error("Geolocalizzazione non supportata");
+
+    if (!navigator.geolocation) {
+      console.error("navigator.geolocation NON disponibile");
       setLoadingLocation(false);
+      return;
     }
+
+    console.log("navigator.geolocation esiste, richiedo posizione…");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log("SUCCESSO:", position);
+        const { latitude, longitude } = position.coords;
+        setUserCoords({ lat: latitude, lng: longitude });
+        setLoadingLocation(false);
+      },
+      (error) => {
+        console.log("ERRORE RAW:", error);
+        console.log("error.code:", error?.code);
+        console.log("error.message:", error?.message);
+
+        setLoadingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
   };
 
   useEffect(() => {

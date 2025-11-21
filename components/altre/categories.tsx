@@ -12,7 +12,7 @@ import { LiaTheaterMasksSolid } from "react-icons/lia";
 
 export const categories = [
     {
-        label: 'Notturni',
+        label: 'Notturno',
         icon: MdOutlineNightlife,
         description:'Eventi notturni!'
     },

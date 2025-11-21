@@ -7,8 +7,8 @@ export async function getTicketById(ticketId: string) {
         const ticket = await db.ticket.findUnique({
             where: { id: ticketId },
             include: {
-                event: true, // Includi i dettagli dell'evento
-                ticketType: true, // Includi il tipo di biglietto
+                event: true,
+                ticketType: true,
             },
         });
         return ticket;

@@ -202,8 +202,8 @@ model FavoriteOrganization {
 
 model UserNotification {
   id             String       @id @default(cuid())
-  notificationId String
-  userId         String
+  notificationId String       @map("notificationid")
+  userId         String       @map("userid")
   createdAt      DateTime     @default(now())
   notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -214,12 +214,13 @@ model UserNotification {
 
 
 model Notification {
-  id                     String             @id @default(cuid())
+  id                     String   @id @default(cuid())
   title                  String
   message                String
   link                   String?
-  createdAt              DateTime           @default(now())
-  senderOrganizationId   String?
+  createdAt              DateTime @map("createdat")               // mappatura necessaria
+  senderOrganizationId   String?  @map("senderorganizationid")   // mappatura se usata
   userNotifications      UserNotification[]
+
   @@map("notification")
 }
