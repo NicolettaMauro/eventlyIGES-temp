@@ -3,7 +3,6 @@
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import HeartButton from "../altre/heart-button";
 import { SafeEvent } from "@/app/types";
 import { User } from "@prisma/client";
@@ -60,15 +59,10 @@ const EventCard: React.FC<EventCardProps> = ({ data, currentUser, isEventCreator
               mb-4
             "
           >
-            <Image
-              alt={data.title}
+            <img
+              alt="Evento"
               src={data.imageSrc || "/images/NERO500.jpg"}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-              width={400}
-              height={400}
-              quality={75}
-              priority={false}
-              loading="lazy"
             />
 
          {isEventCreator ? (

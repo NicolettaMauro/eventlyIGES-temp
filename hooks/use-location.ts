@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 const useLocation = () => {
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [loadingLocation, setLoadingLocation] = useState(false);
+  const [loadingLocation, setLoadingLocation] = useState(true);
 
   const getLocation = () => {
     console.log("→ Chiamata getLocation()");

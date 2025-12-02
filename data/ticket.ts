@@ -19,31 +19,20 @@ export async function getTicketById(ticketId: string) {
 }
 
 
-export async function getTicketsByUser(
-  userId: string,
-  page: number = 1,
-  limit: number = 20
-) {
-  const skip = (page - 1) * limit;
+export async function getTicketsByUser(userId: string) {
+    try {
+        const tickets = await db.ticket.findMany({
+            where: { userId },
+            include: {
+                event: true, // Includi i dettagli dell'evento
+                ticketType: true, // Includi i dettagli del tipo di biglietto
+            },
+            orderBy: { createdAt: "desc" }, // Ordina i biglietti dal più recente al più vecchio
+        });
 
-  try {
-    const tickets = await db.ticket.findMany({
-      where: { userId },
-      include: {
-        event: true,
-        ticketType: true,
-      },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: limit,
-    });
-
-    return tickets;
-  } catch (error) {
-    console.error("❌ Errore nel recupero dei biglietti:", error);
-    return [];
-  }
+        return tickets;
+    } catch (error) {
+        console.error("❌ Errore nel recupero dei biglietti:", error);
+        return [];
+    }
 }
-
-
-

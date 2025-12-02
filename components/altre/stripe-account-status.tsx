@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface StripeAccountStatusProps {
   organizationId: string;
@@ -10,7 +10,7 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
   const [loading, setLoading] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [onboardingLoading, setOnboardingLoading] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [error ] = useState<string | null>(null); // Add error state
   const [status, setStatus] = useState<null | {
     payouts_enabled: boolean;
     charges_enabled: boolean;
@@ -19,6 +19,29 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
     requirements: string[];
     dashboard_url: string;
   }>(null);
+
+  const checkAccountStatus = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/stripe/check-account-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ organizationId }),
+      });
+      const data = await response.json();
+      if (!data.error) {
+        setStatus(data);
+      }
+    } catch (error) {
+      console.error("Errore durante il recupero dello stato dell'account Stripe:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [organizationId]);
+
+  useEffect(() => {
+    checkAccountStatus();
+  }, [checkAccountStatus]);
 
   const handleGenerateOnboardingLink = async () => {
     setOnboardingLoading(true);
@@ -29,9 +52,14 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
         body: JSON.stringify({ organizationId }),
       });
       const data = await response.json();
-      if (data.url) window.open(data.url, "_blank");
-    } catch (err) {
-      console.error("Errore durante l'onboarding a Stripe:", err);
+      if (data.error) {
+     
+      } else if (data.url) {
+        window.open(data.url, "_blank");
+      } 
+    } catch (error) {
+      console.error("Errore durante l'onboarding a Stripe:", error);
+
     } finally {
       setOnboardingLoading(false);
     }
@@ -46,52 +74,49 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
         body: JSON.stringify({ organizationId }),
       });
       const data = await response.json();
-      if (data.url) window.open(data.url, "_blank");
-    } catch (err) {
-      console.error("Errore durante il login a Stripe:", err);
+      if (data.error) {
+        // Remove alert and let the error be handled by the UI
+      } else if (data.url) {
+        window.open(data.url, "_blank");
+      } 
+    } catch (error) {
+      console.error("Errore durante il login a Stripe:", error);
+      // Remove alert here
     } finally {
       setLoginLoading(false);
     }
   };
 
   useEffect(() => {
-    const checkAccountStatus = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/stripe/check-account-status", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ organizationId }),
-        });
-        const data = await response.json();
-        if (!data.error) setStatus(data);
-      } catch (err) {
-        console.error("Errore durante il recupero dello stato dell'account Stripe:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     checkAccountStatus();
-  }, [organizationId]);
+  }, []);
 
   return (
     <div className="mt-4 p-4 border border-gray-300 rounded-lg">
       <h2 className="text-lg font-semibold">Stato Account Stripe</h2>
-
-      {error && (
-        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
+      
+      {error && ( // Add error display
+        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+          {error}
+        </div>
       )}
 
       {loading ? (
         <p>Caricamento...</p>
       ) : status ? (
         <div className="mt-2">
-          <p><strong>Account Stripe ID:</strong> {status.stripeAccountId}</p>
-          <p><strong>Può accettare pagamenti:</strong> {status.charges_enabled ? "✅ Sì" : "❌ No"}</p>
-          <p><strong>Può ricevere fondi:</strong> {status.payouts_enabled ? "✅ Sì" : "❌ No"}</p>
-          <p><strong>Dati inviati:</strong> {status.details_submitted ? "✅ Completo" : "❌ Incompleto"}</p>
-
+          <p>
+            <strong>Account Stripe ID:</strong> {status.stripeAccountId}
+          </p>
+          <p>
+            <strong>Può accettare pagamenti:</strong> {status.charges_enabled ? "✅ Sì" : "❌ No"}
+          </p>
+          <p>
+            <strong>Può ricevere fondi:</strong> {status.payouts_enabled ? "✅ Sì" : "❌ No"}
+          </p>
+          <p>
+            <strong>Dati inviati:</strong> {status.details_submitted ? "✅ Completo" : "❌ Incompleto"}
+          </p>
           {status.requirements.length > 0 && (
             <div className="mt-2">
               <p className="text-yellow-600">Requisiti da completare:</p>
@@ -102,7 +127,6 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
               </ul>
             </div>
           )}
-
           {(!status.details_submitted || !status.payouts_enabled) && (
             <div className="mt-4">
               <button
@@ -114,7 +138,6 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
               </button>
             </div>
           )}
-
           {status.details_submitted && (
             <div className="mt-4">
               <button
@@ -126,6 +149,7 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
               </button>
             </div>
           )}
+        
         </div>
       ) : (
         <p className="text-red-500">⚠️ Nessun dato trovato per questo account.</p>

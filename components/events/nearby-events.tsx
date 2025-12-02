@@ -1,117 +1,103 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import EventList from "@/components/events/events-list";
+import ClientPagination from "@/components/altre/pagination";
 import { SafeNearbyEvent } from "@/app/types/nearby";
 import { User } from "@prisma/client";
-import ClientPagination from "@/components/altre/pagination";
-import Link from "next/link";
-import { Button } from "../ui/button";
 import useLocation from "@/hooks/use-location";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface NearbyEventsProps {
   currentUser?: User | null;
 }
 
 const NearbyEvents: React.FC<NearbyEventsProps> = ({ currentUser }) => {
-  const searchParams = useSearchParams();
-  const category = searchParams.get("category") || "";
-  const query = searchParams.get("query") || "";
-  const dateFilter = searchParams.get("dateFilter") || "";
+  const { userCoords, loadingLocation } = useLocation();
 
-  const [nearbyEvents, setNearbyEvents] = useState<SafeNearbyEvent[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [pageNearby, setPageNearby] = useState<number>(1);
-  const [serverPage, setServerPage] = useState<number>(1);
+  const [events, setEvents] = useState<SafeNearbyEvent[]>([]);
+  const [page, setPage] = useState(1);
+  const [serverPage, setServerPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true);
+
   const eventsPerPage = 5;
 
-  const { userCoords } = useLocation();
-
-  // Fetch iniziale o al cambio dei filtri
-  useEffect(() => {
+  const fetchEvents = async (pageToFetch: number) => {
     if (!userCoords) return;
 
-    setNearbyEvents([]);
-    setPageNearby(1);
+    try {
+      const res = await fetch(
+        `/api/nearby-events?lat=${userCoords.lat}&lng=${userCoords.lng}&limit=${eventsPerPage}&page=${pageToFetch}`
+      );
+      const data = await res.json();
+      if (data?.events && data.events.length > 0) {
+        // Filtra eventi già passati
+        const upcoming = data.events.filter(
+          (e: SafeNearbyEvent) => new Date(e.eventDate) > new Date()
+        );
+
+        setEvents((prev) => [...prev, ...upcoming]);
+        if (data.events.length < eventsPerPage) setHasMore(false);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Errore fetch eventi vicini:", err);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch iniziale
+  useEffect(() => {
+    setEvents([]);
+    setPage(1);
     setServerPage(1);
     setHasMore(true);
     setLoading(true);
 
-    const fetchNearbyEvents = async () => {
-      try {
-        const url = `/api/nearby-events?lat=${userCoords.lat}&lng=${userCoords.lng}&category=${encodeURIComponent(
-          category
-        )}&query=${encodeURIComponent(query)}&dateFilter=${encodeURIComponent(dateFilter)}&limit=10&page=1`;
-        const res = await fetch(url);
-        const data = await res.json();
+    if (userCoords) fetchEvents(1);
+  }, [userCoords]);
 
-        if (data.error) {
-          setNearbyEvents([]);
-        } else {
-          setNearbyEvents(data.events as SafeNearbyEvent[]);
-        }
-      } catch {
-        setNearbyEvents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (loading || loadingLocation) return <div>Caricamento eventi vicini...</div>;
 
-    fetchNearbyEvents();
-  }, [userCoords, category, query, dateFilter]);
-
-  if (loading) return <div>Caricamento eventi vicini...</div>;
-  if (!userCoords) return <div>Coordinate non disponibili.</div>;
-  if (!nearbyEvents.length)
+  if (!events.length)
     return (
-      <>
+      <div>
         <div>Nessun evento trovato.</div>
         <Link href="/">
-          <Button variant={"outline"} size={"default"}>
+          <Button variant="outline" size="default">
             Rimuovi i filtri
           </Button>
         </Link>
-      </>
+      </div>
     );
 
-  const startIndex = (pageNearby - 1) * eventsPerPage;
-  const paginatedEvents = nearbyEvents.slice(startIndex, startIndex + eventsPerPage);
-  const totalPages = Math.ceil(nearbyEvents.length / eventsPerPage);
+  const startIndex = (page - 1) * eventsPerPage;
+  const paginatedEvents = events.slice(startIndex, startIndex + eventsPerPage);
+  const totalPages = Math.ceil(events.length / eventsPerPage);
 
   const fetchMoreEvents = async () => {
-    const newServerPage = serverPage + 1;
-    const url = `/api/nearby-events?lat=${userCoords.lat}&lng=${userCoords.lng}&category=${encodeURIComponent(
-      category
-    )}&query=${encodeURIComponent(query)}&dateFilter=${encodeURIComponent(dateFilter)}&limit=10&page=${newServerPage}`;
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.events.length > 0) {
-        setNearbyEvents((prev) => [...prev, ...data.events]);
-        setServerPage(newServerPage);
-        if (data.events.length < 10) {
-          setHasMore(false);
-        }
-      } else {
-        setHasMore(false);
-      }
-    } catch {
-      console.error("Errore nel caricamento degli eventi vicini.");
-    }
+    const nextServerPage = serverPage + 1;
+    await fetchEvents(nextServerPage);
+    setServerPage(nextServerPage);
   };
 
   return (
     <div>
       <div
-        key={pageNearby}
+        key={page}
         className="pt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-8"
       >
         <EventList events={paginatedEvents} currentUser={currentUser as User} />
       </div>
-      <ClientPagination totalPages={totalPages} page={pageNearby} setPage={setPageNearby} />
-      {nearbyEvents.length >= eventsPerPage && (
+
+      <ClientPagination totalPages={totalPages} page={page} setPage={setPage} />
+
+      {events.length >= eventsPerPage && (
         <div className="flex justify-center mt-4">
           <button
             disabled={!hasMore}
@@ -129,3 +115,4 @@ const NearbyEvents: React.FC<NearbyEventsProps> = ({ currentUser }) => {
 };
 
 export default NearbyEvents;
+

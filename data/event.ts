@@ -366,12 +366,3 @@ export const getEventsByOrganization = async (
     };
   }
 };
-export async function getUpcomingEvents(): Promise<SafeEvent[]> {
-  const result = await getAllActiveEvents("", 6, 1);
-  return result?.events || [];
-}
-
-export async function getNearbyEvents(): Promise<SafeEvent[]> {
-  const result = await getAllActiveEvents("", 6, 1);
-  return result?.events || [];
-}

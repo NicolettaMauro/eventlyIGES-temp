@@ -25,9 +25,7 @@ export default async function Home() {
         </Section>
       </div>
       <Section title="Eventi Vicini a Te">
-        <Suspense fallback={<Loading />}>
-          <NearbyEventsWrapper fullUser={fullUser}/>
-        </Suspense>
+        <NearbyEvents currentUser={fullUser} />
       </Section>
     </main>
   );
@@ -38,6 +36,3 @@ async function UpcomingEventsWrapper({ fullUser }: { fullUser: User | null }) {
   return <UpcomingEvents currentUser={fullUser} />;
 }
 
-async function NearbyEventsWrapper({ fullUser }: { fullUser: User | null }) {
-  return <NearbyEvents currentUser={fullUser} />;
-}

@@ -18,8 +18,12 @@ export async function createNotification({
 }) {
   try {
     const notification = await db.notification.create({
-      data: { title, message, link, senderOrganizationId },
-      select: { id: true }, // solo il campo necessario
+      data: {
+        title,
+        message,
+        link,
+        senderOrganizationId,
+      },
     });
 
     return { success: true, notification };
@@ -31,7 +35,7 @@ export async function createNotification({
 
 /**
  * Crea una notifica e la collega a una lista di userId.
- * Inserimento asincrono per ridurre blocchi
+ * Se userIds è vuoto non fa nulla.
  */
 export async function notifyUsers({
   title,
@@ -53,17 +57,17 @@ export async function notifyUsers({
     throw new Error("Impossibile creare la notifica.");
   }
 
-  // Inserimento parallelo per ridurre blocco e richieste al DB
-  await Promise.allSettled(
-    userIds.map((userId) =>
-      db.userNotification.create({
-        data: { userId, notificationId: res.notification.id },
-      }).catch(err => console.error("Errore pivot:", err))
-    )
-  );
+  await db.userNotification.createMany({
+    data: userIds.map((userId) => ({
+      userId,
+      notificationId: res.notification.id,
+    })),
+    skipDuplicates: true,
+  });
 
   return { success: true, deliveredTo: userIds.length, notificationId: res.notification.id };
 }
+
 
 /**
  * Crea una notifica e la assegna a un singolo utente (pivot user_notification).
@@ -82,10 +86,9 @@ export async function sendUserNotification(params: {
     const res = await createNotification({ title, message, link, senderOrganizationId });
     const notificationId = res.notification.id;
 
-    // Inserimento non bloccante
-    db.userNotification.create({
+    await db.userNotification.create({
       data: { userId, notificationId },
-    }).catch(err => console.error("Errore invio notifica all'utente:", err));
+    });
 
     return { success: true, notificationId };
   } catch (err) {

@@ -79,36 +79,44 @@ export const LoginForm = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} 
-                                        placeholder="Inserisci la tua email"
-                                        type="email" 
-                                        disabled={isPending}/>
-                                    </FormControl>
-                                  <FormMessage />
+                                <FormLabel htmlFor="email">Email</FormLabel>
+                                <FormControl>
+                                    <Input
+                                    {...field}
+                                    id="email"                     // <- ID stabile
+                                    placeholder="Inserisci la tua email"
+                                    type="email"
+                                    disabled={isPending}
+                                    />
+                                </FormControl>
+                                <FormMessage />
                                 </FormItem>
                             )}
-                        />
-                        <FormField
+                            />
+
+                            <FormField
                             control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} 
-                                        placeholder="******"
-                                        type="password" 
-                                        disabled={isPending}/>
-                                    </FormControl>
-                                    <Button variant="link" className="px-0 font-normal" asChild size="sm">
-                                        <Link href="/auth/reset">Password dimenticata?</Link>
-                                    </Button>
-                                    <FormMessage />
+                                <FormLabel htmlFor="password">Password</FormLabel>
+                                <FormControl>
+                                    <Input
+                                    {...field}
+                                    id="password"                 // <- ID stabile
+                                    placeholder="******"
+                                    type="password"
+                                    disabled={isPending}
+                                    />
+                                </FormControl>
+                                <Button variant="link" className="px-0 font-normal" asChild size="sm">
+                                    <Link href="/auth/reset">Password dimenticata?</Link>
+                                </Button>
+                                <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                            />
+
                         <FormError message={error}/>
                         <FormSuccess message={success}/>
                         <Button type="submit"

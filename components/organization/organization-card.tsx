@@ -6,11 +6,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaEdit } from "react-icons/fa";
 
-
 interface OrganizationCardProps {
   id: string;
   name: string;
-  imageSrc?: string | null;
+  imageSrc?: string;
   isOrganizationCreator?: boolean;
 }
 
@@ -48,7 +47,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ id, name, imageSrc,
               mb-4
             "
           >
-          <Image
+            <Image
               alt="Organizzazione"
               src={imageSrc || "/images/NERO500.jpg"} // Immagine di fallback
               priority
