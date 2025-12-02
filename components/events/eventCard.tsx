@@ -60,18 +60,12 @@ const EventCard: React.FC<EventCardProps> = ({ data, currentUser, isEventCreator
               mb-4
             "
           >
-            <Image
+            <img
               alt="Evento"
-              src={data.imageSrc || "/images/NERO500.jpg"} // TODO IMMAGINE ORGANIZZAZIONE???
-              priority
-              fill
-              className="
-                object-cover 
-                transition-transform 
-                duration-300 
-                group-hover:scale-110
-              "
+              src={data.imageSrc || "/images/NERO500.jpg"}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
+
          {isEventCreator ? (
         <div className="absolute right-2 top-2 flex flex-col items-center gap-2 transition-all hover:scale-110">
         {/* Pulsante per la modifica */}

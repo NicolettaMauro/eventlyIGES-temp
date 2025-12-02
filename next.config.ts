@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: 'fkupqytygedxmcwtfmub.supabase.co',
         pathname: '/**',
         
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.djmagitalia.com',
+        pathname: '/**',
       }
     ],
   },

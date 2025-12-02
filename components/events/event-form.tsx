@@ -233,10 +233,14 @@ export const EventForm = ({ organization, type, event }: EventFormProps) => {
     setError("");
     setSuccess("");
 
-    let uploadedImageUrl = await handleImageUpload(files, values.imageSrc || "", values.title);
-    if (!uploadedImageUrl) {
-      uploadedImageUrl = values.imageSrc || "";
+    let uploadedImageUrl;
+    try {
+      uploadedImageUrl = await handleImageUpload(files, values.imageSrc || "", values.title);
+    } catch (err) {
+      console.error("Errore durante il caricamento dell'immagine:", err);
+      uploadedImageUrl = values.imageSrc || ""; // fallback
     }
+
 
     const combinedDateTime = handleEventDateTime(
       new Date(values.eventDateDay),

@@ -1,11 +1,13 @@
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  relationMode            = "prisma"
 }
         
  
@@ -204,7 +206,7 @@ model UserNotification {
   id             String       @id @default(cuid())
   notificationId String       @map("notificationid")
   userId         String       @map("userid")
-  createdAt      DateTime     @default(now())
+  createdAt      DateTime     @map("createdat") @default(now())
   notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -218,9 +220,10 @@ model Notification {
   title                  String
   message                String
   link                   String?
-  createdAt              DateTime @map("createdat")               // mappatura necessaria
-  senderOrganizationId   String?  @map("senderorganizationid")   // mappatura se usata
+  createdAt              DateTime @map("createdat") @default(now())
+  senderOrganizationId   String?  @map("senderorganizationid")
   userNotifications      UserNotification[]
 
   @@map("notification")
 }
+
