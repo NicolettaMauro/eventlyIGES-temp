@@ -60,10 +60,15 @@ const EventCard: React.FC<EventCardProps> = ({ data, currentUser, isEventCreator
               mb-4
             "
           >
-            <img
-              alt="Evento"
+            <Image
+              alt={data.title}
               src={data.imageSrc || "/images/NERO500.jpg"}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              width={400}
+              height={400}
+              quality={75}
+              priority={false}
+              loading="lazy"
             />
 
          {isEventCreator ? (

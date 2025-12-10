@@ -30,13 +30,13 @@ export const { auth, handlers: { GET, POST }, signIn, signOut } = NextAuth({
     }
     //Per fare il login devi verificare l'email
     const existingUser = await getUserById(user.id!);
-    if(!existingUser || !existingUser.emailVerified){
-      return false; 
+    //if(!existingUser || !existingUser.emailVerified){
+      //return false; 
       //TODO: verificare l'email
       
-    }
+    //}
     return true;
-  },  //
+  },  
    async session({ token, session }) {
     //console.log({sessionToken: token})
     if(token.sub && session.user) {

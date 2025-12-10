@@ -11,6 +11,9 @@ export default {
   providers: [
     Credentials({
       async authorize(credentials) {
+      console.log("DEBUG: credentials ricevute:", credentials);
+
+
         const validatedFields = await LoginSchema.safeParseAsync(credentials);
         if (!validatedFields.success) return null;
 
@@ -30,5 +33,6 @@ export default {
         return null;
       }
     })
-  ]
+  ],
+  trustHost: true
 } satisfies NextAuthConfig;

@@ -88,7 +88,8 @@ export default function StripeAccountStatus({ organizationId }: StripeAccountSta
 
   useEffect(() => {
     checkAccountStatus();
-  }, []);
+  }, [checkAccountStatus]);
+
 
   return (
     <div className="mt-4 p-4 border border-gray-300 rounded-lg">
