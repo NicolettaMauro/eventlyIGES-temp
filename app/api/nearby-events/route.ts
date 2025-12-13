@@ -3,18 +3,20 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { manualStatus } from "@prisma/client";
 
-function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371; // raggio della Terra in km
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+export function haversineDistance(
+  lat1Rad: number, lon1Rad: number, lat2Rad: number, lon2Rad: number
+): number {
+  const dLat = lat2Rad - lat1Rad;
+  const dLon = lon2Rad - lon1Rad;
+
+  const sinDLat = Math.sin(dLat / 2);
+  const sinDLon = Math.sin(dLon / 2);
+
+  const a = sinDLat * sinDLat +
+            Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+            sinDLon * sinDLon;
+
+  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 export async function GET(request: Request) {
