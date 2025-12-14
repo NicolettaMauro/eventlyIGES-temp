@@ -2,7 +2,7 @@ import Benchmark from "benchmark";
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371;
+  const R = 6371; // raggio della Terra in km
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
@@ -13,7 +13,6 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
-
 
 const testCoords = [
   [45.4641, 9.1919, 48.8566, 2.3522],

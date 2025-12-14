@@ -1,4 +1,4 @@
-import { Ticket, Event, TicketType } from "@prisma/client";
+ import { Ticket, Event, TicketType } from "@prisma/client";
 import TicketCard from "./ticket-card";
 
 
