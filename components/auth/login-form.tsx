@@ -9,7 +9,6 @@ import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Input } from "@/components/ui/input";
 
 
-
 import {
     Form,
     FormControl,
@@ -80,44 +79,36 @@ export const LoginForm = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel htmlFor="email">Email</FormLabel>
-                                <FormControl>
-                                    <Input
-                                    {...field}
-                                    id="email"                     // <- ID stabile
-                                    placeholder="Inserisci la tua email"
-                                    type="email"
-                                    disabled={isPending}
-                                    />
-                                </FormControl>
-                                <FormMessage />
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} 
+                                        placeholder="Inserisci la tua email"
+                                        type="email" 
+                                        disabled={isPending}/>
+                                    </FormControl>
+                                  <FormMessage />
                                 </FormItem>
                             )}
-                            />
-
-                            <FormField
+                        />
+                        <FormField
                             control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel htmlFor="password">Password</FormLabel>
-                                <FormControl>
-                                    <Input
-                                    {...field}
-                                    id="password"                 // <- ID stabile
-                                    placeholder="******"
-                                    type="password"
-                                    disabled={isPending}
-                                    />
-                                </FormControl>
-                                <Button variant="link" className="px-0 font-normal" asChild size="sm">
-                                    <Link href="/auth/reset">Password dimenticata?</Link>
-                                </Button>
-                                <FormMessage />
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} 
+                                        placeholder="******"
+                                        type="password" 
+                                        disabled={isPending}/>
+                                    </FormControl>
+                                    <Button variant="link" className="px-0 font-normal" asChild size="sm">
+                                        <Link href="/auth/reset">Password dimenticata?</Link>
+                                    </Button>
+                                    <FormMessage />
                                 </FormItem>
                             )}
-                            />
-
+                        />
                         <FormError message={error}/>
                         <FormSuccess message={success}/>
                         <Button type="submit"
