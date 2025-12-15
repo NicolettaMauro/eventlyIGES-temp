@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaEdit } from "react-icons/fa";
 
+
 interface OrganizationCardProps {
   id: string;
   name: string;
@@ -47,13 +48,17 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ id, name, imageSrc,
               mb-4
             "
           >
-            <Image
-              alt="Evento"
-              src={imageSrc ?? "/images/NERO500.jpg"}
+          <Image
+              alt="Organizzazione"
+              src={imageSrc || "/images/NERO500.jpg"} // Immagine di fallback
+              priority
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-110"
-              quality={75}
-              loading="lazy"
+              className="
+                object-cover 
+                transition-transform 
+                duration-300 
+                group-hover:scale-110
+              "
             />
             {isOrganizationCreator && (
                 <div className="absolute right-2 top-2 flex flex-col items-center gap-2 transition-all hover:scale-110">
