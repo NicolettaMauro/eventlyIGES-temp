@@ -48,16 +48,12 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ id, name, imageSrc,
             "
           >
             <Image
-              alt="Organizzazione"
-              src={imageSrc || "/images/NERO500.jpg"} // Immagine di fallback
-              priority
+              alt={data.title || "Evento"}
+              src={data.imageSrc ?? "/images/NERO500.jpg"} // fallback sicuro
               fill
-              className="
-                object-cover 
-                transition-transform 
-                duration-300 
-                group-hover:scale-110
-              "
+              className="object-cover transition-transform duration-300 group-hover:scale-110"
+              quality={75}
+              loading="lazy"
             />
             {isOrganizationCreator && (
                 <div className="absolute right-2 top-2 flex flex-col items-center gap-2 transition-all hover:scale-110">

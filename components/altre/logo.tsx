@@ -9,12 +9,12 @@ const Logo = () =>{
     
     return (
       <Link href="/">
-        <Image
-        alt="logo"
-        className="hidden md:block cursor-pointer"
-        height="150"
-        width="150"
-        src ="/images/evently-logo.png"
+        <img
+          src="/images/evently-logo.png"
+          alt="logo"
+          width={150}
+          height={150}
+          loading="eager"
         />
         </Link>
     )
