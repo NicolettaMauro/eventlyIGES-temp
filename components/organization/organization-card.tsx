@@ -9,7 +9,7 @@ import { FaEdit } from "react-icons/fa";
 interface OrganizationCardProps {
   id: string;
   name: string;
-  imageSrc?: string;
+  imageSrc?: string | null;
   isOrganizationCreator?: boolean;
 }
 
@@ -49,7 +49,7 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ id, name, imageSrc,
           >
             <Image
               alt="Evento"
-              src="/images/NERO500.jpg" // fallback sicuro
+              src={imageSrc ?? "/images/NERO500.jpg"}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-110"
               quality={75}

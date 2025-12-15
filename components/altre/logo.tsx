@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 
 const Logo = () =>{
    
@@ -8,7 +9,7 @@ const Logo = () =>{
     
     return (
       <Link href="/">
-        <img
+        <Image
           src="/images/evently-logo.png"
           alt="logo"
           width={150}
