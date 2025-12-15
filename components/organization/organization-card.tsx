@@ -48,8 +48,8 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ id, name, imageSrc,
             "
           >
             <Image
-              alt={data.title || "Evento"}
-              src={data.imageSrc ?? "/images/NERO500.jpg"} // fallback sicuro
+              alt="Evento"
+              src="/images/NERO500.jpg" // fallback sicuro
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-110"
               quality={75}
