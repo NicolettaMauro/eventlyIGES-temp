@@ -20,7 +20,7 @@ export default function MyTicketsClient({ userId, initialData }: MyTicketsClient
     setLoading(true);
 
     const nextPage = page + 1;
-    const newTickets = await getTicketsByUser(userId, nextPage, 20);
+    const newTickets = await getTicketsByUser(userId);
 
     if (newTickets.length === 0) {
       setHasMore(false);
