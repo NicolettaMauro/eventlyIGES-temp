@@ -15,8 +15,7 @@ const NotificationsPage = async () => {
     return <EmptyState title="Non hai i permessi" subtitle="Effettua il login" />;
   }
 
-  const notifications = await getUserNotifications(user.id);
-
+  const notifications = await getUserNotifications(user.id, 1, 20);
   if (notifications.length === 0) {
     return (
       <EmptyState
