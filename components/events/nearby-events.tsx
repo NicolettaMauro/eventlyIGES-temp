@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import EventList from "@/components/events/events-list";
 import ClientPagination from "@/components/altre/pagination";
 import { SafeNearbyEvent } from "@/app/types/nearby";
@@ -24,7 +24,7 @@ const NearbyEvents: React.FC<NearbyEventsProps> = ({ currentUser }) => {
 
   const eventsPerPage = 5;
 
-  const fetchEvents = async (pageToFetch: number) => {
+  const fetchEvents = useCallback(async (pageToFetch: number) => {
     if (!userCoords) return;
 
     try {
@@ -33,7 +33,6 @@ const NearbyEvents: React.FC<NearbyEventsProps> = ({ currentUser }) => {
       );
       const data = await res.json();
       if (data?.events && data.events.length > 0) {
-        // Filtra eventi già passati
         const upcoming = data.events.filter(
           (e: SafeNearbyEvent) => new Date(e.eventDate) > new Date()
         );
@@ -49,7 +48,8 @@ const NearbyEvents: React.FC<NearbyEventsProps> = ({ currentUser }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userCoords]);
+
 
   // Fetch iniziale
   useEffect(() => {
@@ -60,7 +60,8 @@ const NearbyEvents: React.FC<NearbyEventsProps> = ({ currentUser }) => {
     setLoading(true);
 
     if (userCoords) fetchEvents(1);
-  }, [userCoords]);
+  }, [userCoords, fetchEvents]);
+
 
   if (loading || loadingLocation) return <div>Caricamento eventi vicini...</div>;
 
