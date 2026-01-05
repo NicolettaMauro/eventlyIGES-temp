@@ -13,7 +13,7 @@ export default auth(async (req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-
+  const isEventPage = nextUrl.pathname.startsWith("/events/");
   
 
   if (isApiAuthRoute) {
@@ -27,7 +27,7 @@ export default auth(async (req) => {
     return NextResponse.next();
   }
 
-  if (!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isPublicRoute && !isEventPage) {
 
     let callbackUrl = nextUrl.pathname;
     if(nextUrl.search) {
